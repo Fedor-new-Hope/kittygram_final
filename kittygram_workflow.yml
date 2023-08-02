@@ -1,5 +1,3 @@
-# Файл main.yml
-
 name: Main Kittygram workflow
 
 on:
