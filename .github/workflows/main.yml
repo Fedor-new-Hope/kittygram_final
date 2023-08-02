@@ -74,7 +74,7 @@ jobs:
           tags: fedor389111/kittygram_backend:latest 
   
   frontend_tests:
-  runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
