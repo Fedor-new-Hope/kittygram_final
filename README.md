@@ -1,85 +1,60 @@
+# Kittygram
 Kittygram - блог для размещение фотографий котиков.
 Описание проекта:
 Проект Kittygram даёт возможность пользователям поделиться и похвастаться фотографиями своих любимымих котиков. Зарегистрированные пользователи могут создавать, просматривать, редактировать и удалять свои записи.
 
-Установка проекта:
-Клонироуйте репозиторий:
+## Технологии
+- Docker
+- Git
+- Nginx
+- Gunicorn
+- Python
+- Django
+- Django REST framework
 
-git clone git@github.com:Fedor-new-Hope/kittygram_final.git
-cd kittygram
-Создайте файл .env и заполните его своими данными:
+## Секреты .env
 
-# Секреты DB
+```
+SECRET_KEY='SECRET_KEY'
+DEBUG=False
+ALLOWED_HOSTS='ваш домен'
 POSTGRES_USER=[имя_пользователя_базы]
 POSTGRES_PASSWORD=[пароль_к_базе]
 POSTGRES_DB= [имя_базы_данных]
 DB_PORT=[порт_соединения_к_базе]
 DB_HOST=[db]
 
-# Секреты джанги
-SECRET_KEY='SECRET_KEY'
-DEBUG=False
-ALLOWED_HOSTS='ваш домен'
-Создание Docker-образов
-Замените username на ваш логин на DockerHub:
+```
 
-cd frontend
-docker build -t username/kittygram_frontend .
-cd ../backend
-docker build -t username/kittygram_backend .
-cd ../nginx
-docker build -t username/kittygram_gateway . 
-Загрузите образы на DockerHub:
 
-docker push username/kittygram_frontend
-docker push username/kittygram_backend
-docker push username/kittygram_gateway
-Деплой на удалённый сервере
-Подключитесь к удаленному серверу
+### Запуск из образа Docker Hub
+Для запуска необходимо скачать в папку проекта файл docker-compose.production.yml и запустить его:
+```
+sudo docker compose -f docker-compose.production.yml up
+```
+Произойдет скачивание образов, создание и включение контейнеров, создание томов и сети.
 
-ssh -i путь_до_файла_с_SSH_ключом/название_файла_с_SSH_ключом имя_пользователя@ip_адрес_сервера 
-Создайте на сервере директорию kittygram через терминал
+### Запуск проекта из исходников GitHub
+Клонируем к себе репозиторий:
+```
+git clone git@github.com:Fedor-new-Hope/kittygram_final.git
+```
+Запускаем:
+```
+sudo docker compose -f docker-compose.yml up
+```
 
-mkdir kittygram
-Установка docker compose на сервер:
+### Миграции и сбор статики
+```
+sudo docker compose -f [имя-файла-docker-compose.yml] exec backend python manage.py migrate
 
-sudo apt update
-sudo apt install curl
-curl -fSL https://get.docker.com -o get-docker.sh
-sudo sh ./get-docker.sh
-sudo apt-get install docker-compose-plugin
-В директорию kittygram/ скопируйте файлы docker-compose.production.yml и .env:
+sudo docker compose -f [имя-файла-docker-compose.yml] exec backend python manage.py collectstatic
 
-scp -i path_to_SSH/SSH_name docker-compose.production.yml username@server_ip:/home/username/kittygram/docker-compose.production.yml
-Запустите docker compose в режиме демона:
+sudo docker compose -f [имя-файла-docker-compose.yml] exec backend cp -r /app/collected_static/. /static/static/
+```
 
-sudo docker compose -f docker-compose.production.yml up -d
-Выполните миграции, соберите статику бэкенда и скопируйте их в /backend_static/static/:
+Проект будет доступен локально по адресу [http://localhost:9000/](http://localhost:9000/)
 
-sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
-sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
-sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /backend_static/static/
-На сервере в редакторе nano откройте конфиг Nginx:
-
-sudo nano /etc/nginx/sites-enabled/default
-Добавте настройки location в секции server:
-
-location / {
-    proxy_set_header Host $http_host;
-    proxy_pass http://127.0.0.1:9000;
-}
-Проверьте работоспособность конфигураций и перезапустите Nginx:
-
-sudo nginx -t 
-sudo service nginx reload
-
-Технологии и необходимые ниструменты:
-Docker
-Python 3.x
-Git
-Nginx
-Gunicorn
-Django 
 
 Автор
 Кулабухов Федор - GitHub
